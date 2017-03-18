@@ -23,7 +23,6 @@ $listDirn   = $this->escape($this->state->get('list.direction'));
 $ordering   = ($listOrder == 'a.lft');
 $saveOrder  = ($listOrder == 'a.lft' && strtolower($listDirn) == 'asc');
 $menuType   = (string) $app->getUserState('com_menus.items.menutype', '', 'string');
-$saveOrderingUrl = false;
 
 if ($saveOrder && $menuType)
 {
@@ -102,7 +101,7 @@ if ($menuType == '')
 							</tr>
 						</tfoot>
 
-						<tbody <?php if ($saveOrder) :?> class="js-draggable" <?php if ($saveOrderingUrl) : ?> data-url="<?php echo $saveOrderingUrl; ?>" <?php endif; ?> data-direction="<?php echo strtolower($listDirn); ?>" data-nested="false"<?php endif; ?>>
+                        <tbody <?php if ($saveOrder && $menuType) :?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($listDirn); ?>" data-nested="false"<?php endif; ?>>
 						<?php
 
 						foreach ($this->items as $i => $item) :
