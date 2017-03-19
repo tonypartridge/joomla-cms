@@ -34,7 +34,7 @@ JFactory::getDocument()->addScriptDeclaration(
 );
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_config'); ?>" id="component-form" method="post" name="adminForm" autocomplete="off" data-cancel-task="config.cancel.component">
+<form action="<?php echo JRoute::_('index.php?option=com_config'); ?>" id="component-form" class="form-validate" method="post" name="adminForm" autocomplete="off" data-cancel-task="config.cancel.component">
 	<div class="row">
 
 		<?php // Begin Sidebar ?>
