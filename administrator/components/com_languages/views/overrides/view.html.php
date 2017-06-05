@@ -55,6 +55,9 @@ class LanguagesViewOverrides extends JViewLegacy
 		$this->items      = $this->get('Overrides');
 		$this->languages  = $this->get('Languages');
 		$this->pagination = $this->get('Pagination');
+		$this->total         = $this->get('Total');
+		$this->filterForm    = $this->get('FilterForm');
+		$this->activeFilters = $this->get('ActiveFilters');
 
 		LanguagesHelper::addSubmenu('overrides');
 

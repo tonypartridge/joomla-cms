@@ -153,7 +153,7 @@ class LanguagesModelOverrides extends JModelList
 		$default = JComponentHelper::getParams('com_languages')->get('site') . '0';
 
 		$old_language_client = $app->getUserState('com_languages.overrides.filter.language_client', '');
-		$language_client     = $this->getUserStateFromRequest('com_languages.overrides.filter.language_client', 'filter_language_client', $default, 'cmd');
+		$language_client     = $this->getUserStateFromRequest('com_languages.overrides.filter.language_client', 'language_client', $default, 'cmd');
 
 		if ($old_language_client != $language_client)
 		{
