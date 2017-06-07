@@ -36,7 +36,8 @@ class LanguagesModelOverride extends JModelAdmin
 			return false;
 		}
 
-		$client   = $this->getState('filter.client', 'site');
+		$client   = $this->getState('filter.client', 0);
+		$clientString   = $client ? JText::_('JADMINISTRATOR') : JText::_('JSITE');
 		$language = $this->getState('filter.language', 'en-GB');
 		$langName = JLanguage::getInstance($language)->getName();
 
@@ -47,9 +48,9 @@ class LanguagesModelOverride extends JModelAdmin
 			$langName = $language;
 		}
 
-		$form->setValue('client', null, JText::_('COM_LANGUAGES_VIEW_OVERRIDE_CLIENT_' . strtoupper($client)));
+		$form->setValue('client', null, JText::_('COM_LANGUAGES_VIEW_OVERRIDE_CLIENT_' . $clientString));
 		$form->setValue('language', null, JText::sprintf('COM_LANGUAGES_VIEW_OVERRIDE_LANGUAGE', $langName, $language));
-		$form->setValue('file', null, JPath::clean(constant('JPATH_' . strtoupper($client)) . '/language/overrides/' . $language . '.override.ini'));
+		$form->setValue('file', null, JPath::clean(constant('JPATH_' . $clientString) . '/language/overrides/' . $language . '.override.ini'));
 
 		return $form;
 	}
@@ -89,10 +90,14 @@ class LanguagesModelOverride extends JModelAdmin
 	{
 		JLoader::register('LanguagesHelper', JPATH_ADMINISTRATOR . '/components/com_languages/helpers/languages.php');
 
+		$client = $this->getState('filter.client', 0);
+		$clientString   = $client ? JText::_('JADMINISTRATOR') : JText::_('JSITE');
+		$oppositeString = $client ? JText::_('JSITE') : JText::_('JADMINISTRATOR');
+
+		$language        = $this->getState('filter.language', 'en-GB');
 		$input    = JFactory::getApplication()->input;
 		$pk       = (!empty($pk)) ? $pk : $input->get('id');
-		$filename = constant('JPATH_' . strtoupper($this->getState('filter.client')))
-			. '/language/overrides/' . $this->getState('filter.language', 'en-GB') . '.override.ini';
+		$filename = constant('JPATH_' . $clientString) . '/language/overrides/' . $language. '.override.ini';
 		$strings = LanguagesHelper::parseFile($filename);
 
 		$result = new stdClass;
@@ -105,10 +110,10 @@ class LanguagesModelOverride extends JModelAdmin
 			$result->override = $strings[$pk];
 		}
 
-		$opposite_filename = constant('JPATH_' . strtoupper($this->getState('filter.client') == 'site' ? 'administrator' : 'site')) 
-			. '/language/overrides/' . $this->getState('filter.language', 'en-GB') . '.override.ini';
+		$opposite_filename = constant('JPATH_' . $oppositeString) . '/language/overrides/' . $language . '.override.ini';
 		$opposite_strings = LanguagesHelper::parseFile($opposite_filename);
-		$result->both = isset($opposite_strings[$pk]) && ($opposite_strings[$pk] == $strings[$pk]);
+
+		$result->both = isset($opposite_strings[$pk]) && ($opposite_strings[$pk] === $strings[$pk]);
 
 		return $result;
 	}
@@ -117,13 +122,13 @@ class LanguagesModelOverride extends JModelAdmin
 	 * Method to save the form data.
 	 *
 	 * @param   array    $data             The form data.
-	 * @param   boolean  $opposite_client  Indicates whether the override should not be created for the current client.
+	 * @param   boolean  $oppositeClient  Indicates whether the override should not be created for the current client.
 	 *
 	 * @return  boolean  True on success, false otherwise.
 	 *
 	 * @since   2.5
 	 */
-	public function save($data, $opposite_client = false)
+	public function save($data, $oppositeClient = false)
 	{
 		JLoader::register('LanguagesHelper', JPATH_ADMINISTRATOR . '/components/com_languages/helpers/languages.php');
 		jimport('joomla.filesystem.file');
@@ -134,7 +139,7 @@ class LanguagesModelOverride extends JModelAdmin
 		$language = $app->getUserState('com_languages.overrides.filter.language', 'en-GB');
 
 		// If the override should be created for both.
-		if ($opposite_client)
+		if ($oppositeClient)
 		{
 			$client = 1 - $client;
 		}
@@ -185,7 +190,7 @@ class LanguagesModelOverride extends JModelAdmin
 
 		// If the override should be stored for both clients save
 		// it also for the other one and prevent endless recursion.
-		if (isset($data['both']) && $data['both'] && !$opposite_client)
+		if (isset($data['both']) && $data['both'] && !$oppositeClient)
 		{
 			return $this->save($data, true);
 		}

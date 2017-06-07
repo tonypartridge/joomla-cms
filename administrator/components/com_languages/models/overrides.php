@@ -50,10 +50,11 @@ class LanguagesModelOverrides extends JModelList
 			return $this->cache[$store];
 		}
 
-		$client = in_array($this->state->get('filter.client'), array(0, 'site')) ? 'SITE' : 'ADMINISTRATOR';
+		$client = $this->state->get('filter.client', 0);
+		$clientString = $client ? 'ADMINISTRATOR' : 'SITE';
 
 		// Parse the override.ini file in order to get the keys and strings.
-		$filename = constant('JPATH_' . $client) . '/language/overrides/' . $this->getState('filter.language') . '.override.ini';
+		$filename = constant('JPATH_' . $clientString) . '/language/overrides/' . $this->getState('filter.language') . '.override.ini';
 		$strings = LanguagesHelper::parseFile($filename);
 
 		// Delete the override.ini file if empty.
@@ -157,12 +158,12 @@ class LanguagesModelOverrides extends JModelList
 
 		if ($old_language_client != $language_client)
 		{
-			$client   = substr($language_client, -1);
+			$client   = (int) substr($language_client, -1);
 			$language = substr($language_client, 0, -1);
 		}
 		else
 		{
-			$client   = $app->getUserState('com_languages.overrides.filter.client', 0);
+			$client   = (int) $app->getUserState('com_languages.overrides.filter.client', 0);
 			$language = $app->getUserState('com_languages.overrides.filter.language', 'en-GB');
 		}
 
@@ -171,7 +172,7 @@ class LanguagesModelOverrides extends JModelList
 		$this->setState('filter.search', $search);
 
 		$this->setState('filter.language_client', $language . $client);
-		$this->setState('filter.client', $client ? 'administrator' : 'site');
+		$this->setState('filter.client', $client);
 		$this->setState('filter.language', $language);
 
 		// Add filters to the session because they won't be stored there by 'getUserStateFromRequest' if they aren't in the current request.
@@ -248,10 +249,10 @@ class LanguagesModelOverrides extends JModelList
 		JLoader::register('LanguagesHelper', JPATH_ADMINISTRATOR . '/components/com_languages/helpers/languages.php');
 
 		$filterclient = JFactory::getApplication()->getUserState('com_languages.overrides.filter.client');
-		$client = $filterclient == 0 ? 'SITE' : 'ADMINISTRATOR';
+		$clientString = $filterclient ? 'ADMINISTRATOR' : 'SITE';
 
 		// Parse the override.ini file in oder to get the keys and strings.
-		$filename = constant('JPATH_' . $client) . '/language/overrides/' . $this->getState('filter.language') . '.override.ini';
+		$filename = constant('JPATH_' . $clientString) . '/language/overrides/' . $this->getState('filter.language') . '.override.ini';
 		$strings = LanguagesHelper::parseFile($filename);
 
 		// Unset strings that shall be deleted
