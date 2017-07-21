@@ -11,6 +11,7 @@
 		var sortableRange;
 		var childrenNodes;
 		var sameLevelNodes;
+
 		if (sortDir != 'desc') {
 			sortDir = 'asc';
 		}
